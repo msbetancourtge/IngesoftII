@@ -27,7 +27,7 @@ public class UserServiceTest {
         user.setEmail("mockito@test.com");
         user.setPasswordHash(bCryptPasswordEncoder.encode("123456"));
 
-        Mockito.when(userRepository.findByEmail("mockito@test.com")).thenReturn(Optional.of(user);
+        Mockito.when(userRepository.findByEmail("mockito@test.com")).thenReturn(Optional.of(user));
 
         boolean resetResult = userService.resetPassword("mockito@test.com", "newpassword");
 
