@@ -1,4 +1,11 @@
 package com.clickmunch.GeoService.dto;
 
-public record LocationRequest() {
+import com.clickmunch.GeoService.entity.LocationType;
+
+public record LocationRequest(
+    String name,
+    LocationType type,
+    Double latitude,
+    Double longitude
+) {
 }
