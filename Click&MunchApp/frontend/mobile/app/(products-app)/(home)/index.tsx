@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { ThemedText } from '@/components/themed-text'
+import { ThemedText } from '@/presentation/theme/components/themed-text'
 
 const HomeScreen = () => {
   return (
