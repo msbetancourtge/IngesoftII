@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS plates(
+    id SERIAL PRIMARY KEY,
+    store_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    image VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS drinks(
+    id SERIAL PRIMARY KEY,
+    store_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    image VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS desserts(
+    id SERIAL PRIMARY KEY,
+    store_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    image VARCHAR(255) NOT NULL
+);

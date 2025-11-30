@@ -24,3 +24,12 @@ logging:
   level:
     root: INFO
     org.springframework.jdbc.core.JdbcTemplate: DEBUG
+
+# Menu service URL for inter-service communication
+# menu-service:
+#   url: http://localhost:8083
+
+# logging:
+#   level:
+#     root: INFO
+#     org.springframework.jdbc.core.JdbcTemplate: DEBUG
