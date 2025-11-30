@@ -91,17 +91,17 @@ export const authRegister = async (
         });
 
                 // backend returns only a message; return the created user info and message
-                const user: User = {
-                    username,
-                    email,
-                    name,
-                    role: role as any,
-                };
+        const user: User = {
+            username,
+            email,
+            name,
+            role: role as any,
+        };
 
-                return {
-                    user,
-                    message: data.message,
-                };
+        return {
+            user,
+            message: data.message,
+        };
     } catch (error) {
         console.log(error);
         return {
@@ -112,15 +112,14 @@ export const authRegister = async (
 };
 
 export const authCheckStatus = async() => {
-    // Quick client-side status check using stored token and user info
-    const token = localStorage.getItem('token');
-    const username = localStorage.getItem('username');
-    const role = localStorage.getItem('role');
+   
+    try {
+        const { data } = await productsApi.get<AuthResponse>('/auth/check-status');
 
-    if (token && username && role) {
-        const user: User & { token?: string } = { username, role: role as any, token };
-        return { user, message: 'OK' };
+        return returnUserToken(data);
+    } catch (error) {
+
+        return null;
     }
 
-    return null;
 };
