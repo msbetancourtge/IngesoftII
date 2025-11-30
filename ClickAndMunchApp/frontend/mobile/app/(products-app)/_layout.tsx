@@ -2,6 +2,8 @@ import { View, Text, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore'
 import { useEffect } from 'react';
+import { ThemedText } from '@/presentation/theme/components/themed-text';
+import { Redirect, Stack } from 'expo-router';
 
 const CheckAuthenticationLayout = () => {
 
@@ -18,7 +20,7 @@ const CheckAuthenticationLayout = () => {
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginBottom: 5
+                    marginBottom: 5,
                 }}
             >
                 <ActivityIndicator/>
@@ -26,6 +28,20 @@ const CheckAuthenticationLayout = () => {
         )
     }
 
+    if ( status === 'unauthenticated' ) {
+        return <Redirect href='/auth/login'/>
+    }
+
+    return (
+        <Stack>
+            <Stack.Screen 
+                name='(home)/index'
+                options={{
+                    title: 'Productos',
+                }}
+            />    
+        </Stack>
+    )
     
 }
 
