@@ -1,3 +1,4 @@
+import { authCheckStatus, authLogin } from "@/core/auth/actions/auth-actions";
 import User from "@/core/auth/interface/user";
 import { create } from 'zustand'
 
@@ -12,7 +13,7 @@ export type AuthState = {
     setToken: (token: string | null) => void;
     setUser: (user: User | null) => void;
 
-    login: (email: string, password: string) => Promise<boolean>;
+    login: (username: string, password: string) => Promise<boolean>;
     checkStatus: () => Promise<void>;
     logout: () => Promise<void>;
 } 
@@ -29,16 +30,58 @@ export const useAuthStore = create<AuthState>()( (set, get) => ({
     setUser: (user) => set({ user }),
 
     //Actions
-    login: async (email: string, password: string) => {
+    login: async (username: string, password: string) => {
+        const resp = await authLogin(username, password);
+
+        if(!resp) {
+            set({
+                status: 'unauthenticated',
+                token: null,
+                user: null,
+            })
+
+            return false;
+        }
+
+        set({
+            status: 'authenticated',
+            token: resp.user.token,
+            user: resp.user
+        })
+
+
         return true;
+
     },
     
     checkStatus: async() => {
+        const resp = await authCheckStatus();
 
+        if (!resp) {
+            set({
+                status: 'unauthenticated',
+                token: null,
+                user: null,
+            })
+
+            return;
+        }
+
+         set({
+            status: 'authenticated',
+            token: resp.user.token,
+            user: resp.user
+        })
+        return;
     },
 
     logout: async() => {
 
+        set({
+            status: 'unauthenticated',
+            token: null,
+            user: null
+        })
     }
 
 }) )

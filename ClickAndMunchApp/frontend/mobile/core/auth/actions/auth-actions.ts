@@ -1,4 +1,5 @@
 import { productsApi } from "../api/productsApi";
+import User from "../interface/user";
 
 // Generic API Response wrapper
 interface ApiResponse<T> {
@@ -38,17 +39,18 @@ interface AuthRegisterResponse {
 }
 
 const returnUserToken = (response: AuthLoginResponse) => {
+    if (!response || !response.data) return null;
 
-    if (response.data) {
-        return {
-            token: response.data.token,
-            username: response.data.username,
-            role: response.data.role,
-            message: response.message,
-        };
-    }
+    const user: User & { token?: string } = {
+        username: response.data.username,
+        role: response.data.role as any,
+        token: response.data.token,
+    };
 
-    return null;
+    return {
+        user,
+        message: response.message,
+    };
 };
 
 export const authLogin = async (username: string, password: string) => {
@@ -58,7 +60,14 @@ export const authLogin = async (username: string, password: string) => {
         password,
        });
 
-       return returnUserToken(data);
+             const result = returnUserToken(data);
+             if (result && result.user.token) {
+                 localStorage.setItem('token', result.user.token);
+                 if (result.user.username) localStorage.setItem('username', result.user.username);
+                 if (result.user.role) localStorage.setItem('role', String(result.user.role));
+             }
+
+             return result;
     } catch (error) {
         console.log(error);
         return null;
@@ -81,10 +90,18 @@ export const authRegister = async (
             role,
         });
 
-        return {
-            success: data.message.toLowerCase().includes('success'),
-            message: data.message,
-        };
+                // backend returns only a message; return the created user info and message
+                const user: User = {
+                    username,
+                    email,
+                    name,
+                    role: role as any,
+                };
+
+                return {
+                    user,
+                    message: data.message,
+                };
     } catch (error) {
         console.log(error);
         return {
@@ -95,14 +112,15 @@ export const authRegister = async (
 };
 
 export const authCheckStatus = async() => {
-    try {
-        const { data } = await productsApi.post<AuthLoginResponse>('/api/auth/login', {
-            username: localStorage.getItem('username'),
-            password: '', // This won't work - need a better approach
-        });
+    // Quick client-side status check using stored token and user info
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    const role = localStorage.getItem('role');
 
-        return returnUserToken(data);
-    } catch (error) {
-        return null;
+    if (token && username && role) {
+        const user: User & { token?: string } = { username, role: role as any, token };
+        return { user, message: 'OK' };
     }
+
+    return null;
 };
