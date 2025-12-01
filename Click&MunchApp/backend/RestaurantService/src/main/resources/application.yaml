@@ -25,3 +25,11 @@ server:
 logging:
   level:
     root: INFO
+
+auth:
+    service:
+        url: http://localhost:8081
+
+geo:
+    service:
+        url: http://localhost:8083
