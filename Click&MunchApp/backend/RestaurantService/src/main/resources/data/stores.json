@@ -1,0 +1,76 @@
+{
+  "stores": [
+    {
+      "name": "Mc Donnalds",
+      "alias":"Calle 45",
+      "email": "mcdonnalds45@gmail.com",
+      "password": "Password1234567",
+      "address": "Calle 45 # 8 74, Piso 1, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.6584656,
+      "longitude": -74.21365465
+    },
+    {
+      "name": "Mc Donnalds",
+      "alias":"Calle 53",
+      "email": "mcdonnalds53@gmail.com",
+      "password": "Password1234567",
+      "address": "Calle 53 # 13 70, Piso 1, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.654651,
+      "longitude": -74.876548
+    },
+    {
+      "name": "Burger King",
+      "alias":"Calle 45",
+      "email": "burgerking45@gmail.com",
+      "password": "Password1234567",
+      "address": "Calle 45 # 8 74, Piso 1, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.6584656,
+      "longitude": -74.21365465
+    },
+    {
+      "name": "Burger King",
+      "alias":"Calle 63",
+      "email": "burgerking63@gmail.com",
+      "password": "Password1234567",
+      "address": "Calle 63 # 13 70, Piso 10, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.654651,
+      "longitude": -74.876548
+    },
+    {
+      "name": "Sopitas y Frijolada",
+      "alias": "principal",
+      "email": "sopitas53@gmail.com",
+      "password": "Password1234567",
+      "address": "Calle 53 # 13 70, Piso 1, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.654651,
+      "longitude": -74.876548
+    },
+    {
+      "name": "Barbaros",
+      "alias":"Calle 45",
+      "email": "barbaros45@gmail.com",
+      "password": "Password1234",
+      "address": "Calle 45 # 8 74, Piso 15, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.6584656,
+      "longitude": -74.21365465
+    },
+    {
+      "name": "Sanalejo",
+      "alias":"Calle 85",
+      "email": "sanalejo85@gmail.com",
+      "password": "Password12367",
+      "address": "Calle 85 # 13 70, Piso 2, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.654651,
+      "longitude": -74.876548
+    },
+    {
+      "name": "Cumbiambare",
+      "alias":"Principal",
+      "email": "cumbiabar@gmail.com",
+      "password": "Password123",
+      "address": "Calle 53 # 13 70, Piso 1, Bogotá, Cundinamarca, Colombia",
+      "latitude": 5.654651,
+      "longitude": -74.876548
+    }
+  ]
+}

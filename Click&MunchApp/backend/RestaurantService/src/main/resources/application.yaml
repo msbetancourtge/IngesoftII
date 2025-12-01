@@ -25,6 +25,7 @@ server:
 logging:
   level:
     root: INFO
+<<<<<<< HEAD:Click&MunchApp/backend/RestaurantService/src/main/resources/application.yaml
     org.springframework.jdbc.core: DEBUG
 
 management:
@@ -42,3 +43,15 @@ geo:
 auth:
   service:
     url: http://localhost:8081
+=======
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+
+# Menu service URL for inter-service communication
+# menu-service:
+#   url: http://localhost:8083
+
+# logging:
+#   level:
+#     root: INFO
+#     org.springframework.jdbc.core.JdbcTemplate: DEBUG
+>>>>>>> 4e396fcfa0f4cf2ce7a63529b590db803433669e:Click&MunchApp/backend/RestaurantService/src/main/resources/application.yml
