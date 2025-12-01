@@ -16,4 +16,5 @@ public interface UserRepository extends ListCrudRepository<User, Long> {
     Optional<User> findByResetToken(@Param("resetToken") String resetToken);
 
     Optional<User> findByEmail(String email);
+
 }

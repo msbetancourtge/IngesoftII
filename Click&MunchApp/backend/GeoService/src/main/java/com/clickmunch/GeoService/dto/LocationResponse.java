@@ -1,12 +1,12 @@
 package com.clickmunch.GeoService.dto;
 
-import com.clickmunch.GeoService.entity.LocationType;
-
-public record LocationRequest(
+public record LocationResponse(
+        Long id,
         Long restaurantId,
         String name,
         String type,
         Double latitude,
-        Double longitude
+        Double longitude,
+        Double distanceMeters
 ) {
 }

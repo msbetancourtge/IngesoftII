@@ -4,6 +4,7 @@ import com.clickmunch.AuthService.config.JwtTokenUtil;
 import com.clickmunch.AuthService.dto.ApiResponse;
 import com.clickmunch.AuthService.dto.LoginRequest;
 import com.clickmunch.AuthService.dto.RegisterRequest;
+import com.clickmunch.AuthService.dto.UserInfoResponse;
 import com.clickmunch.AuthService.entity.Role;
 import com.clickmunch.AuthService.entity.User;
 import com.clickmunch.AuthService.repository.UserRepository;
@@ -89,5 +90,18 @@ public class AuthService {
         return true;
     }
 
+    public UserInfoResponse getUserById(Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            return null;
+        }
+        else{
+            User user = userOpt.get();
+            return new UserInfoResponse(
+                    user.getUsername(),
+                    user.getRole().name()
+            );
+        }
+    }
 
 }
