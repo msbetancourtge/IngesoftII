@@ -90,7 +90,7 @@ export const authRegister = async (
             role,
         });
 
-                // backend returns only a message; return the created user info and message
+        // backend returns only a message; return the created user info and message
         const user: User = {
             username,
             email,

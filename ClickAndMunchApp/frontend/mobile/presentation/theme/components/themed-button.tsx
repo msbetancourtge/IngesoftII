@@ -13,14 +13,15 @@ const ThemedButton = ({ children, icon, ...rest}: Props) => {
         
     return (
         <Pressable
-            style={({pressed}) => [
-                {
-                    backgroundColor: pressed ? (primaryColor + '90') : (primaryColor),
-                },
-                styles.button,
+                {...rest}
+                style={({pressed}) => [
+                    {
+                        backgroundColor: pressed ? (primaryColor + '90') : (primaryColor),
+                    },
+                    styles.button,
 
-            ]}
-        >
+                ]}
+            >
             <Text style={{ color: 'white' }}>{ children }</Text>
 
             {icon && (
