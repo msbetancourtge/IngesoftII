@@ -1,20 +1,12 @@
 plugins {
 	id 'java'
-<<<<<<< HEAD
 	id 'org.springframework.boot' version '4.0.0'
-=======
-	id 'org.springframework.boot' version '4.0.0-RC2'
->>>>>>> 4e396fcfa0f4cf2ce7a63529b590db803433669e
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.clickmunch'
 version = '0.0.1-SNAPSHOT'
-<<<<<<< HEAD
 description = 'Menu Service for click & Munch'
-=======
-description = 'Menu Full Service'
->>>>>>> 4e396fcfa0f4cf2ce7a63529b590db803433669e
 
 java {
 	toolchain {
@@ -32,30 +24,16 @@ repositories {
 	mavenCentral()
 }
 
-<<<<<<< HEAD
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-=======
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
-// Key dependencies and roles:
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	// Provides Spring MVC, embedded servlet container and common web utilities for building REST APIs.
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// Brings Spring's JDBC support and common JDBC utilities for working with relational databases.
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-	// Adds Jakarta Bean Validation (Hibernate Validator) support for request and entity validation.
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// Spring Data JDBC support for simple, JDBC-based repositories and mapping.
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
@@ -67,8 +45,14 @@ dependencies {
 	// Helper for launching Docker Compose services during integration tests or local development.
 	//runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
 
+	compileOnly 'org.projectlombok:lombok'
+
 
 	// Testing libraries:
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -77,13 +61,8 @@ dependencies {
 
 	// Docs
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14'
->>>>>>> 4e396fcfa0f4cf2ce7a63529b590db803433669e
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 4e396fcfa0f4cf2ce7a63529b590db803433669e
