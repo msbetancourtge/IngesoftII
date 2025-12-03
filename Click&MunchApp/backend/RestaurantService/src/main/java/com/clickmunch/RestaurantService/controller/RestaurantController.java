@@ -6,6 +6,8 @@ import com.clickmunch.RestaurantService.dto.NearbySearchRequest;
 import com.clickmunch.RestaurantService.dto.RestaurantResponse;
 import com.clickmunch.RestaurantService.entity.Restaurant;
 import com.clickmunch.RestaurantService.service.RestaurantService;
+
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

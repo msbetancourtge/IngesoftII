@@ -19,5 +19,4 @@ public class MenuItem {
     private String description;
     private BigDecimal price;
     private String imageUrl;
-    
 }

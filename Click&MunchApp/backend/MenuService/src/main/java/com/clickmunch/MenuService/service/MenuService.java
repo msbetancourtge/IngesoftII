@@ -1,6 +1,7 @@
 package com.clickmunch.MenuService.service;
 
 import com.clickmunch.MenuService.dto.MenuItemRequest;
+import com.clickmunch.MenuService.dto.MenuCategoryRequest;
 import com.clickmunch.MenuService.dto.MenuRestaurantResponse;
 import com.clickmunch.MenuService.dto.MenuCreateRequest;
 import com.clickmunch.MenuService.entity.*;
@@ -26,12 +27,12 @@ public class MenuService {
         }
 
     // Get full menu for a restaurant
-    public MenuRestaurantResponse getMenuByStoreId(Integer storeId) {
-        Long restaurantId = storeId == null ? null : storeId.longValue();
+    public MenuRestaurantResponse getMenuByRestaurantId(Long restaurantId) {
+        Long resId = restaurantId == null ? null : restaurantId.longValue();
 
-        List<MenuCategory> categories = menuCategoryRepository.findByRestaurantId(restaurantId);
+        List<MenuCategory> categories = menuCategoryRepository.findByRestaurantId(resId);
         if (categories == null || categories.isEmpty()) {
-            return new MenuRestaurantResponse(storeId, List.of());
+            return new MenuRestaurantResponse(restaurantId, List.of());
         }
 
         List<Long> categoryIds = categories.stream()
@@ -39,7 +40,7 @@ public class MenuService {
                 .collect(Collectors.toList());
 
         List<MenuItem> items = menuItemRepository.findAllByCategoryIdIn(categoryIds);
-        return new MenuRestaurantResponse(storeId, items);
+        return new MenuRestaurantResponse(restaurantId, items);
     }
 
     // Remove all menu items for a restaurant
@@ -64,9 +65,17 @@ public class MenuService {
     }
 
     // CRUD
+    public MenuCategory createMenuCategory(MenuCategoryRequest req) {
+        MenuCategory cat = new MenuCategory();
+        cat.setRestaurantId(req.restaurantId());
+        cat.setName(req.name());
+        
+        return menuCategoryRepository.save(cat);
+    }
+
     public MenuItem createMenuItem(Long categoryId, MenuItemRequest req) {
         MenuItem item = new MenuItem();
-        item.setCategoryId(categoryId == null ? null : categoryId.longValue());
+        item.setCategoryId(categoryId == null ? null : categoryId);
         item.setName(req.name());
         item.setDescription(req.description());
         item.setPrice(req.price());
@@ -77,12 +86,15 @@ public class MenuService {
 
     // Create full menu for a restaurant: categories + items
     @Transactional
-    public MenuRestaurantResponse createFullMenu(Integer storeId, MenuCreateRequest request) {
+    public MenuRestaurantResponse createFullMenu(MenuCreateRequest request) {
+
+        Long restaurantId = request.restaurantId();
+
         if (request == null || request.categories() == null || request.categories().isEmpty()) {
-            return new MenuRestaurantResponse(storeId, List.of());
+            return new MenuRestaurantResponse(restaurantId, List.of());
         }
 
-        if (storeId == null || !storeId.equals(request.storeId())) {
+        if (restaurantId == null || !restaurantId.equals(request.restaurantId())) {
             throw new IllegalArgumentException("storeId mismatch or null");
         }
 
@@ -90,7 +102,7 @@ public class MenuService {
         List<MenuCategory> categoriesToSave = request.categories().stream()
                 .map(cReq -> {
                     MenuCategory mc = new MenuCategory();
-                    mc.setRestaurantId(storeId.longValue());
+                    mc.setRestaurantId(restaurantId.longValue());
                     mc.setName(cReq.name());
                     return mc;
                 })
@@ -122,7 +134,11 @@ public class MenuService {
         savedItemsIterable.forEach(savedItems::add);
 
         // return response with saved items
-        return new MenuRestaurantResponse(storeId, savedItems);
+        return new MenuRestaurantResponse(restaurantId, savedItems);
+    }
+
+    public MenuCategory findMenuCategoryById(Long id) {
+        return menuCategoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Menu Category not found"));
     }
 
     public MenuItem findMenuItemById(Long id) {
@@ -144,9 +160,22 @@ public class MenuService {
     }
 
     @Transactional
+    public MenuCategory updateMenuCategory(Long menuCategoryId, MenuCategoryRequest req) {
+        MenuCategory existing = menuCategoryRepository.findById(menuCategoryId)
+                    .orElseThrow(() -> new RuntimeException("Menu Category not found."));
+    
+        MenuCategory updated = new MenuCategory();
+        updated.setId(existing.getId());
+        updated.setRestaurantId(existing.getRestaurantId());
+        updated.setName(req.name() != null ? req.name() : existing.getName());
+
+        return menuCategoryRepository.save(updated);
+    }
+
+    @Transactional
     public MenuItem updateMenuItem(Long menuItemId, MenuItemRequest req) {
         MenuItem existing = menuItemRepository.findById(menuItemId)
-                .orElseThrow(() -> new RuntimeException("Plate not found"));
+                .orElseThrow(() -> new RuntimeException("Menu Item not found"));
         MenuItem updated = new MenuItem();
         updated.setId(existing.getId());
         updated.setCategoryId(existing.getCategoryId());
@@ -156,6 +185,10 @@ public class MenuService {
         updated.setImageUrl(req.imageUrl() != null ? req.imageUrl() : existing.getImageUrl());
 
         return menuItemRepository.save(updated);
+    }
+
+    public void deleteMenuCategory(Long menuCategoryId) {
+        menuCategoryRepository.deleteById(menuCategoryId);
     }
 
     public void deleteMenuItem(Long menuItemId) {

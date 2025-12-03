@@ -5,7 +5,7 @@ import com.clickmunch.MenuService.entity.MenuItem;
 import java.util.List;
 
 public record MenuRestaurantResponse(
-    Integer storeId,
+    Long storeId,
     List<MenuItem>menuItems
 ){
 }
