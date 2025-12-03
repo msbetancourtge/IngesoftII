@@ -61,7 +61,7 @@ public class MenuController {
         }
     }
 
-    // Update a menu categopru
+    // Update a menu category
     @PutMapping("/categories/{categoryId}")
     public MenuCategory updateMenuCategory(@PathVariable Long categoryId, @RequestBody MenuCategoryRequest req) {
         try {
