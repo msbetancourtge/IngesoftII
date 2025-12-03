@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record MenuCreateRequest(
-    Integer storeId,
+    Long restaurantId,
     List<CategoryRequest> categories
 ) {
     public record CategoryRequest(
