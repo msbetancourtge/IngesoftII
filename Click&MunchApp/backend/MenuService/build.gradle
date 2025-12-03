@@ -7,6 +7,9 @@ plugins {
 group = 'com.clickmunch'
 version = '0.0.1-SNAPSHOT'
 description = 'Menu Service for click & Munch'
+springBoot {
+	mainClass.value('com.clickmunch.MenuService.MenuServiceApplication')
+}
 
 java {
 	toolchain {
@@ -45,7 +48,11 @@ dependencies {
 	// Helper for launching Docker Compose services during integration tests or local development.
 	//runtimeOnly 'org.springframework.boot:spring-boot-docker-compose'
 
-	compileOnly 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
 
 	// Testing libraries:
