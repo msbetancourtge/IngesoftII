@@ -12,5 +12,5 @@ public class MenuCategory {
     private Long id;
     @Column("restaurant_id")
     private Long restaurantId;
-    private String name;
+    private Category category;
 }

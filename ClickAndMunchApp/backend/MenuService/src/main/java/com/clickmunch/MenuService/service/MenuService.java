@@ -68,7 +68,7 @@ public class MenuService {
     public MenuCategory createMenuCategory(MenuCategoryRequest req) {
         MenuCategory cat = new MenuCategory();
         cat.setRestaurantId(req.restaurantId());
-        cat.setName(req.name());
+        cat.setCategory(req.category());
         
         return menuCategoryRepository.save(cat);
     }
@@ -103,7 +103,7 @@ public class MenuService {
                 .map(cReq -> {
                     MenuCategory mc = new MenuCategory();
                     mc.setRestaurantId(restaurantId.longValue());
-                    mc.setName(cReq.name());
+                    mc.setCategory(cReq.category());
                     return mc;
                 })
                 .collect(Collectors.toList());
@@ -167,7 +167,7 @@ public class MenuService {
         MenuCategory updated = new MenuCategory();
         updated.setId(existing.getId());
         updated.setRestaurantId(existing.getRestaurantId());
-        updated.setName(req.name() != null ? req.name() : existing.getName());
+        updated.setCategory(req.category());
 
         return menuCategoryRepository.save(updated);
     }

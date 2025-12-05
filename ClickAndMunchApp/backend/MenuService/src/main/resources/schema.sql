@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS menu_categories (
            id SERIAL PRIMARY KEY,
            restaurant_id BIGINT NOT NULL,
-           name VARCHAR(100) NOT NULL
+           category VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS menu_items (

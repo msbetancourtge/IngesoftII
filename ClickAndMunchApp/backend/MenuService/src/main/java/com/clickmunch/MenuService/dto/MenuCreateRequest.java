@@ -1,5 +1,7 @@
 package com.clickmunch.MenuService.dto;
 
+import com.clickmunch.MenuService.entity.Category;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -8,7 +10,7 @@ public record MenuCreateRequest(
     List<CategoryRequest> categories
 ) {
     public record CategoryRequest(
-        String name,
+        Category category,
         List<ItemRequest> items
     ) {}
 
