@@ -5,6 +5,6 @@ Repository created for Workshops and Course Project
 
 - Michael Betancourt
 - Camilo Herrera
-- Christian Cely
+- Cristhian Cely
 - William Pinilla
 - Juan Manuel Cristancho
