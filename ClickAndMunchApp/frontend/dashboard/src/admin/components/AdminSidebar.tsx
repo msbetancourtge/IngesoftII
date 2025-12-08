@@ -25,12 +25,15 @@ export const AdminSidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) 
   const menuItems = [
     { icon: Home, label: 'Dashboard', to: '/' },
     { icon: BarChart3, label: 'Productos', to: '/products' },
-    { icon: Users, label: 'Usuarios' },
-    { icon: ShoppingCart, label: 'Ordenes' },
-    { icon: FileText, label: 'Reportes' },
-    { icon: Bell, label: 'Notificaciones' },
-    { icon: Settings, label: 'Ajustes' },
-    { icon: HelpCircle, label: 'Ayuda' },
+    { icon: Users, label: 'Usuarios', to: '/users' },
+    { icon: ShoppingCart, label: 'Ordenes', to: '/orders' },
+    { icon: FileText, label: 'Reservas', to: '/reservations' },
+    { icon: FileText, label: 'Restaurantes', to: '/restaurants' },
+    { icon: FileText, label: 'Reportes', to: '/reports' },
+    { icon: FileText, label: 'Ratings', to: '/ratings' },
+    { icon: Bell, label: 'Notificaciones', to: '/notifications' },
+    { icon: Settings, label: 'Ajustes', to: '/settings' },
+    { icon: HelpCircle, label: 'Ayuda', to: '/help' },
   ];
 
   const isActiveRoute = ( to: string ) => {
