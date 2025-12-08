@@ -4,6 +4,7 @@ import { useAuthStore } from '@/presentation/auth/store/useAuthStore'
 import { useEffect } from 'react';
 import { ThemedText } from '@/presentation/theme/components/themed-text';
 import { Redirect, Stack } from 'expo-router';
+import LogOutButton from '@/presentation/auth/components/LogOutButton';
 
 const CheckAuthenticationLayout = () => {
 
@@ -38,6 +39,7 @@ const CheckAuthenticationLayout = () => {
                 name='(home)/index'
                 options={{
                     title: 'Productos',
+                    headerLeft: () => <LogOutButton/>
                 }}
             />    
         </Stack>
