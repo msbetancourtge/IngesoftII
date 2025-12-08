@@ -5,6 +5,7 @@ import ThemedTextInput from '@/presentation/theme/components/themed-text-input';
 import ThemedButton from '@/presentation/theme/components/themed-button';
 import ThemedLink from '@/presentation/theme/components/themed-link';
 import { authRegister } from '@/core/auth/actions/auth-actions';
+import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { useRouter } from 'expo-router';
 
 const RegisterScreen = () => {
@@ -35,7 +36,21 @@ const RegisterScreen = () => {
 
     // res contains { user, message }
     Alert.alert('Registro', res.message || 'Usuario creado');
-    // navigate to login
+
+    // Try to auto-login the user after successful registration
+    try {
+      const { login } = useAuthStore.getState();
+      const wasLogged = await login(username, password);
+      if (wasLogged) {
+        // replace stack to home
+        router.replace('/');
+        return;
+      }
+    } catch (err) {
+      console.log('Auto-login after register failed:', err);
+    }
+
+    // fallback: navigate to login screen
     router.push('/auth/login');
   }
 

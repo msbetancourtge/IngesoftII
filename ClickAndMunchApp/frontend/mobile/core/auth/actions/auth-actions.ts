@@ -140,7 +140,7 @@ export const authRegister = async (
     email: string,
     username: string,
     password: string,
-    role: string = 'USER'
+    role: string = 'CUSTOMER'
 ) => {
     try {
         const { data } = await productsApi.post<AuthRegisterResponse>('/api/auth/register', {
