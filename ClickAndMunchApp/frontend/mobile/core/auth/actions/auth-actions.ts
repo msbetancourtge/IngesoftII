@@ -1,5 +1,41 @@
 import { productsApi } from "../api/productsApi";
 import User from "../interface/user";
+import { SecureStorageAdapater } from '@/helpers/adapters/secure-storage-adapter';
+
+// Small helper to decode JWT payload without verifying signature.
+const decodeJwtPayload = (token: string) => {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const payload = parts[1];
+        // Replace URL-safe chars and pad
+        const b64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+        const pad = b64.length % 4;
+        const padded = pad === 2 ? b64 + '==' : pad === 3 ? b64 + '=' : b64;
+
+        // base64 decode: try common runtimes
+        let decoded: string | null = null;
+        if (typeof atob === 'function') {
+            decoded = atob(padded);
+        } else if (typeof Buffer !== 'undefined') {
+            decoded = Buffer.from(padded, 'base64').toString('binary');
+        } else {
+            return null;
+        }
+
+        const json = decodeURIComponent(
+            decoded
+                .split('')
+                .map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                })
+                .join('')
+        );
+        return JSON.parse(json);
+    } catch (err) {
+        return null;
+    }
+};
 
 // Generic API Response wrapper
 interface ApiResponse<T> {
@@ -9,9 +45,11 @@ interface ApiResponse<T> {
 
 // Login response data
 interface LoginResponseData {
-  token: string;
-  username: string;
-  role: string;
+    // backend returns token string in `data` (ApiResponse<string>),
+    // keep this shape for compatibility but we'll also accept richer objects.
+    token?: string;
+    username?: string;
+    role?: string;
 }
 
 // Register response (data is null, just check message)
@@ -25,12 +63,8 @@ type RegisterResponse = ApiResponse<null>;
 
 // Or more specifically:
 interface AuthLoginResponse {
-  message: string;
-  data: {
-    token: string;
-    username: string;
-    role: string;
-  } | null;
+    message: string;
+    data: string | { token?: string; username?: string; role?: string } | null;
 }
 
 interface AuthRegisterResponse {
@@ -38,13 +72,38 @@ interface AuthRegisterResponse {
   data: null;
 }
 
-const returnUserToken = (response: AuthLoginResponse) => {
-    if (!response || !response.data) return null;
+const returnUserToken = (response: AuthLoginResponse, providedUsername?: string) => {
+    if (!response || response.data == null) return null;
+
+    // If backend returned a token string (common in this backend), normalize it.
+    let token: string | undefined;
+    let username: string | undefined;
+    let role: string | undefined;
+
+    if (typeof response.data === 'string') {
+        token = response.data;
+    } else if (typeof response.data === 'object') {
+        token = response.data.token;
+        username = response.data.username;
+        role = response.data.role;
+    }
+
+    // If we still don't have username/role, try to decode from JWT payload
+    if (token) {
+        const payload = decodeJwtPayload(token);
+        if (payload) {
+            if (!username && payload.sub) username = payload.sub;
+            if (!role && payload.role) role = payload.role;
+        }
+    }
+
+    // fallback to provided username (from login form)
+    if (!username && providedUsername) username = providedUsername;
 
     const user: User & { token?: string } = {
-        username: response.data.username,
-        role: response.data.role as any,
-        token: response.data.token,
+        username: username || '',
+        role: (role || 'USER') as any,
+        token: token,
     };
 
     return {
@@ -60,16 +119,18 @@ export const authLogin = async (username: string, password: string) => {
         password,
        });
 
-             const result = returnUserToken(data);
+             const result = returnUserToken(data, username);
+             console.log('authLogin result:', result);
              if (result && result.user.token) {
-                 localStorage.setItem('token', result.user.token);
-                 if (result.user.username) localStorage.setItem('username', result.user.username);
-                 if (result.user.role) localStorage.setItem('role', String(result.user.role));
+                 // Save token and basic info to secure storage for mobile
+                 await SecureStorageAdapater.setItem('token', result.user.token);
+                 if (result.user.username) await SecureStorageAdapater.setItem('username', result.user.username);
+                 if (result.user.role) await SecureStorageAdapater.setItem('role', String(result.user.role));
              }
 
              return result;
     } catch (error) {
-        console.log(error);
+        console.log('authLogin error:', error);
         return null;
     }
 };
@@ -114,11 +175,21 @@ export const authRegister = async (
 export const authCheckStatus = async() => {
    
     try {
-        const { data } = await productsApi.get<AuthResponse>('/auth/check-status');
+        console.log('🔍 Checking auth status (mobile) from secure storage...');
+        const token = await SecureStorageAdapater.getItem('token');
+        if (!token) return null;
 
-        return returnUserToken(data);
+        // build a response-like object to reuse returnUserToken logic
+        const fakeResponse: AuthLoginResponse = {
+            message: 'token-from-storage',
+            data: token,
+        };
+
+        const result = returnUserToken(fakeResponse);
+        console.log('✅ Auth check result (mobile local):', result);
+        return result;
     } catch (error) {
-
+        console.log('❌ Check status error (mobile):', error);
         return null;
     }
 
