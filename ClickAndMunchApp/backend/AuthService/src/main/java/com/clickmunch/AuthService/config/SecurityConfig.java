@@ -28,6 +28,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/auth/users/**").permitAll()
                         .requestMatchers("/auth/password-reset/**").permitAll()// allow register/login
+                        .requestMatchers("/swagger-ui/**").permitAll()  // Swagger UI
+                        .requestMatchers("/v3/api-docs/**").permitAll() // API docs
                         .anyRequest().authenticated()                // everything else requires auth
                 )
                 .httpBasic(AbstractHttpConfigurer::disable) // no HTTP Basic
