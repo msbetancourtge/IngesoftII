@@ -1,4 +1,4 @@
-import { productsApi } from "../api/productsApi";
+import { productsApi } from "@/core/api/productsApi";
 import User from "../interface/user";
 import { SecureStorageAdapater } from '@/helpers/adapters/secure-storage-adapter';
 
@@ -37,31 +37,6 @@ const decodeJwtPayload = (token: string) => {
     }
 };
 
-// Generic API Response wrapper
-interface ApiResponse<T> {
-  message: string;
-  data: T | null;
-}
-
-// Login response data
-interface LoginResponseData {
-    // backend returns token string in `data` (ApiResponse<string>),
-    // keep this shape for compatibility but we'll also accept richer objects.
-    token?: string;
-    username?: string;
-    role?: string;
-}
-
-// Register response (data is null, just check message)
-interface RegisterResponseData {
-  // null
-}
-
-// Combined AuthResponse type
-type AuthResponse = ApiResponse<LoginResponseData>;
-type RegisterResponse = ApiResponse<null>;
-
-// Or more specifically:
 interface AuthLoginResponse {
     message: string;
     data: string | { token?: string; username?: string; role?: string } | null;
@@ -88,7 +63,6 @@ const returnUserToken = (response: AuthLoginResponse, providedUsername?: string)
         role = response.data.role;
     }
 
-    // If we still don't have username/role, try to decode from JWT payload
     if (token) {
         const payload = decodeJwtPayload(token);
         if (payload) {

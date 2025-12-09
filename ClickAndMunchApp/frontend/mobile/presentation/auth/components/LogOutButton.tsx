@@ -1,9 +1,8 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useThemeColor } from '@/presentation/theme/hooks/use-theme-color'
 import { useAuthStore } from '../store/useAuthStore';
 import { Ionicons } from '@expo/vector-icons';
-import { ThemedText } from '@/presentation/theme/components/themed-text';
 
 const LogOutButton = () => {
 

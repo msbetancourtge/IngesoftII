@@ -1,17 +1,25 @@
-import { View, Text } from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 import React from 'react'
-import { ThemedText } from '@/presentation/theme/components/themed-text'
-import { useThemeColor } from '@/presentation/theme/hooks/use-theme-color'
+import { useRestaurants } from '@/presentation/restaurants/hooks/useRestaurants'
+import RestaurantsList from '@/presentation/restaurants/components/RestaurantsList';
+
 
 const HomeScreen = () => {
 
-  const primary = useThemeColor({}, 'primary');
+  const { restaurantsQuery , loadNextPage } = useRestaurants();
+
+  if ( restaurantsQuery.isLoading ) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size={30}/>
+      </View>
+    )
+  }
 
   return (
-    <View style={{ paddingTop: 100, paddingHorizontal: 20 }}>
-      <ThemedText style={{ fontFamily: 'KanitBold', color: primary }}>HomeScreen</ThemedText>
-      <ThemedText style={{ fontFamily: 'kanitRegular' }}>HomeScreen</ThemedText>
-      <ThemedText style={{ fontFamily: 'KanitThin' }}>HomeScreen</ThemedText>
+    <View style={{ paddingHorizontal: 10 }}>
+      
+      <RestaurantsList restaurants={restaurantsQuery.data?.pages.flatMap(page => page) ?? []} loadNextPage={loadNextPage}/>
 
     </View>
   )
