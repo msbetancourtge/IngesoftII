@@ -2,10 +2,8 @@ package com.clickmunch.RestaurantService.service;
 
 import com.clickmunch.RestaurantService.client.AuthClient;
 import com.clickmunch.RestaurantService.client.GeoClient;
-import com.clickmunch.RestaurantService.dto.AuthUserResponse;
-import com.clickmunch.RestaurantService.dto.CreateRestaurantRequest;
-import com.clickmunch.RestaurantService.dto.LocationDto;
-import com.clickmunch.RestaurantService.dto.RestaurantResponse;
+import com.clickmunch.RestaurantService.client.MenuClient;
+import com.clickmunch.RestaurantService.dto.*;
 import com.clickmunch.RestaurantService.entity.Restaurant;
 import com.clickmunch.RestaurantService.repository.RestaurantRepository;
 import org.springframework.stereotype.Service;
@@ -19,11 +17,13 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final GeoClient geoClient;
     private final AuthClient authClient;
+    private final MenuClient menuClient;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, GeoClient geoClient, AuthClient authClient) {
+    public RestaurantService(RestaurantRepository restaurantRepository, GeoClient geoClient, AuthClient authClient, MenuClient menuClient) {
         this.restaurantRepository = restaurantRepository;
         this.geoClient = geoClient;
         this.authClient = authClient;
+        this.menuClient = menuClient;
     }
 
     public RestaurantResponse createRestaurant(CreateRestaurantRequest request) {
@@ -107,4 +107,20 @@ public class RestaurantService {
     }
 
 
+    public RestaurantDetailsResponse getRestaurantDetails(Long id) {
+        var restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        var menuCategories = menuClient.getMenuByRestaurant(id);
+
+        return new RestaurantDetailsResponse(
+                restaurant.getId(),
+                restaurant.getName(),
+                geoClient.getAddressById(restaurant.getId()),
+                geoClient.getLocationById(restaurant.getId()).latitude(),
+                geoClient.getLocationById(restaurant.getId()).longitude(),
+                restaurant.getDescription(),
+                menuCategories
+        );
+    }
 }

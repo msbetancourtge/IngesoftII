@@ -1,4 +1,4 @@
-package com.clickmunch.AuthService.config;
+package com.clickmunch.APIGateway.security;
 
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;

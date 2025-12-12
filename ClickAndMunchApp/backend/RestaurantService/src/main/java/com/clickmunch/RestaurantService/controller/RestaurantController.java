@@ -3,6 +3,7 @@ package com.clickmunch.RestaurantService.controller;
 import com.clickmunch.RestaurantService.client.AuthClient;
 import com.clickmunch.RestaurantService.dto.CreateRestaurantRequest;
 import com.clickmunch.RestaurantService.dto.NearbySearchRequest;
+import com.clickmunch.RestaurantService.dto.RestaurantDetailsResponse;
 import com.clickmunch.RestaurantService.dto.RestaurantResponse;
 import com.clickmunch.RestaurantService.entity.Restaurant;
 import com.clickmunch.RestaurantService.service.RestaurantService;
@@ -53,6 +54,11 @@ public class RestaurantController {
                 nearbySearchRequest.longitude(),
                 nearbySearchRequest.radiusInKm());
         return ResponseEntity.ok(restaurants);
+    }
+
+    @GetMapping("/{id}/details" )
+    public ResponseEntity<RestaurantDetailsResponse> getRestaurantDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(restaurantService.getRestaurantDetails(id));
     }
 
 }

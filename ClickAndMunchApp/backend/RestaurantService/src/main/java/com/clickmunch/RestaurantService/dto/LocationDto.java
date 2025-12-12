@@ -5,6 +5,7 @@ public record LocationDto(
         String name,
         String type,
         Double latitude,
-        Double longitude
+        Double longitude,
+        String address
 ) {
 }

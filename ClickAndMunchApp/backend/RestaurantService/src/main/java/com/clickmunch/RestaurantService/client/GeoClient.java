@@ -41,4 +41,16 @@ public class GeoClient {
         return Arrays.asList(response);
     }
 
+    public LocationDto getLocationById(Long locationId) {
+        return restTemplate.getForObject(GEO_URL + "/locations/" + locationId, LocationDto.class);
+    }
+
+    public String getAddressById(Long locationId) {
+        LocationDto location = getLocationById(locationId);
+        if (location != null) {
+            return location.address();
+        }
+        return null;
+    }
+
 }
