@@ -1,0 +1,36 @@
+name: Build Dashboard
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'ClickAndMunchApp/frontend/dashboard/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ClickAndMunchApp/frontend/dashboard/package.json
+
+      - name: Install deps
+        working-directory: ClickAndMunchApp/frontend/dashboard
+        run: npm ci
+
+      - name: Build
+        working-directory: ClickAndMunchApp/frontend/dashboard
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-dist
+          path: ClickAndMunchApp/frontend/dashboard/dist
