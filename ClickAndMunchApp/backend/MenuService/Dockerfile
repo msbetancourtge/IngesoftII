@@ -2,7 +2,7 @@
 FROM gradle:8.9.0-jdk21 AS builder
 WORKDIR /app
 COPY . .
-RUN ./gradlew clean bootJar
+RUN gradle clean bootJar
 
 # Run stage (Java 21 LTS)
 FROM eclipse-temurin:21-jre
