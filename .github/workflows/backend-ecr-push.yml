@@ -1,0 +1,60 @@
+name: Build and Push Backend Images to ECR
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'ClickAndMunchApp/backend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }} # e.g., 123456789012.dkr.ecr.us-east-1.amazonaws.com
+    strategy:
+      matrix:
+        include:
+          - service: APIGateway
+            repo: clickandmunchapp/api-gateway
+          - service: AuthService
+            repo: clickandmunchapp/auth
+          - service: RestaurantService
+            repo: clickandmunchapp/restaurant
+          - service: GeoService
+            repo: clickandmunchapp/geo
+          - service: MenuService
+            repo: clickandmunchapp/menu
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image name
+        id: vars
+        run: |
+          IMAGE_NAME=${{ env.ECR_REGISTRY }}/${{ matrix.repo }}:$(echo "${GITHUB_SHA}" | cut -c1-7)
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        working-directory: ClickAndMunchApp/backend/${{ matrix.service }}
+        run: |
+          docker build -t ${{ steps.vars.outputs.IMAGE_NAME }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ steps.vars.outputs.IMAGE_NAME }}
+
+      - name: Output image tag
+        run: echo "Pushed ${{ steps.vars.outputs.IMAGE_NAME }}"
