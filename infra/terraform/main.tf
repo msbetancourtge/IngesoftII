@@ -21,7 +21,6 @@ module "network" {
 module "security" {
   source   = "./modules/security"
   vpc_id   = module.network.vpc_id
-  alb_sg_id = null
 }
 
 module "acm" {
