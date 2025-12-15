@@ -36,3 +36,9 @@ variable "images" {
   description = "Map of service -> image URI"
   type        = map(string)
 }
+
+variable "execution_role_arn" {
+  description = "Optional pre-existing ECS task execution role ARN; leave empty to let Terraform create one"
+  type        = string
+  default     = ""
+}

@@ -46,6 +46,7 @@ module "ecs" {
   private_subnet_ids  = module.network.private_subnet_ids
   ecs_sg_id           = module.security.ecs_sg_id
   alb_target_group_arn = module.alb.target_group_arn
+  execution_role_arn  = var.execution_role_arn
   db_username         = var.db_username
   db_password         = var.db_password
   # Images from ECR

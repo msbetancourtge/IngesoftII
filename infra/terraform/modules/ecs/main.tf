@@ -6,12 +6,18 @@ variable "images" { type = map(string) }
 variable "db_endpoints" { type = map(string) }
 variable "db_username" { type = string }
 variable "db_password" { type = string }
+variable "execution_role_arn" {
+  type        = string
+  description = "Existing ECS task execution role ARN (leave empty to create)"
+  default     = ""
+}
 
 resource "aws_ecs_cluster" "this" {
   name = var.cluster_name
 }
 
 resource "aws_iam_role" "task_execution" {
+  count              = var.execution_role_arn == "" ? 1 : 0
   name               = "clickmunch-ecs-task-execution"
   assume_role_policy = data.aws_iam_policy_document.task_assume.json
 }
@@ -27,8 +33,13 @@ data "aws_iam_policy_document" "task_assume" {
 }
 
 resource "aws_iam_role_policy_attachment" "task_execution" {
-  role       = aws_iam_role.task_execution.name
+  count      = var.execution_role_arn == "" ? 1 : 0
+  role       = aws_iam_role.task_execution[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+locals {
+  execution_role_arn = var.execution_role_arn != "" ? var.execution_role_arn : aws_iam_role.task_execution[0].arn
 }
 
 locals {
@@ -79,7 +90,7 @@ resource "aws_ecs_task_definition" "svc" {
   memory                   = 512
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.task_execution.arn
+  execution_role_arn       = local.execution_role_arn
   container_definitions    = jsonencode([
     {
       name      = each.key
