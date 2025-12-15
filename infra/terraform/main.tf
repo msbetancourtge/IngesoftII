@@ -49,10 +49,11 @@ module "rds" {
 module "ecs" {
   source              = "./modules/ecs"
   cluster_name        = var.cluster_name
-  vpc_id              = module.network.vpc_id
   private_subnet_ids  = module.network.private_subnet_ids
   ecs_sg_id           = module.security.ecs_sg_id
   alb_target_group_arn = module.alb.target_group_arn
+  db_username         = var.db_username
+  db_password         = var.db_password
   # Images from ECR
   images = var.images
   # DB endpoints from RDS module
@@ -62,7 +63,6 @@ module "ecs" {
     geo        = module.rds.geo_endpoint
     menu       = module.rds.menu_endpoint
   }
-  domain_name = var.domain_name
 }
 
 output "alb_dns_name" {
