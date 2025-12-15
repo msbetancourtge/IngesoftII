@@ -14,6 +14,7 @@ import { AdminRatingsPage } from './admin/pages/ratings/AdminRatingsPage'
 import { RegisterPage } from './auth/pages/register/RegisterPage'
 import { lazy } from 'react'
 import { LoginPage } from './auth/pages/login/LoginPage'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const AuthLayout = lazy(() => import('./auth/layouts/AuthLayout'))
 const AdminLayout = lazy( () => import('./admin/layouts/AdminLayout')) 
@@ -21,7 +22,7 @@ const AdminLayout = lazy( () => import('./admin/layouts/AdminLayout'))
 export const appRouter = createBrowserRouter([
     {
         path: '/',
-        element: <AdminLayout/>,
+        element: <ProtectedRoute><AdminLayout/></ProtectedRoute>,
         children: [
             {
                 index: true,

@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router"
 import { useState } from "react"
-import { login } from "@/lib/auth"
+import { useAuth } from "@/contexts/AuthContext"
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,13 +24,13 @@ export const LoginPage = () => {
     }
 
     setLoading(true);
-    const result = await login(username, password);
-    setLoading(false);
-
-    if (result.success) {
+    try {
+      await login(username, password);
       navigate("/");
-    } else {
-      setError(result.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,14 +121,22 @@ export const LoginPage = () => {
                   Crear cuenta
                 </Link>
               </div>
+              <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-xs text-blue-800 text-center">
+                  <strong>Credenciales de prueba:</strong><br/>
+                  Usuario: <code className="bg-blue-100 px-1.5 py-0.5 rounded">admin</code> | 
+                  Contraseña: <code className="bg-blue-100 px-1.5 py-0.5 rounded">admin123</code>
+                </p>
+              </div>
             </div>
           </form>
-          <div className="relative hidden bg-muted md:block">
-            <img
-              src="/placeholder.svg"
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
+          <div className="relative hidden bg-gradient-to-br from-orange-400 via-red-400 to-pink-400 md:flex md:flex-col md:items-center md:justify-center md:p-8">
+            <div className="text-white text-center space-y-4 z-10">
+              <h2 className="text-4xl font-bold">Click & Munch</h2>
+              <p className="text-xl">Dashboard de Administración</p>
+              <p className="text-lg opacity-90">Gestiona tu restaurante de forma fácil y eficiente</p>
+            </div>
+            <div className="absolute inset-0 bg-black/10"></div>
           </div>
         </CardContent>
       </Card>
