@@ -13,19 +13,25 @@ jobs:
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }} # e.g., 123456789012.dkr.ecr.us-east-1.amazonaws.com
+      ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }} # e.g., clickmunch
     strategy:
       matrix:
         include:
           - service: APIGateway
             repo: clickandmunchapp/api-gateway
+            ecs_service: api_gateway
           - service: AuthService
             repo: clickandmunchapp/auth
+            ecs_service: auth
           - service: RestaurantService
             repo: clickandmunchapp/restaurant
+            ecs_service: restaurant
           - service: GeoService
             repo: clickandmunchapp/geo
+            ecs_service: geo
           - service: MenuService
             repo: clickandmunchapp/menu
+            ecs_service: menu
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,17 +60,38 @@ jobs:
       - name: Set image name
         id: vars
         run: |
-          IMAGE_NAME=${{ env.ECR_REGISTRY }}/${{ matrix.repo }}:$(echo "${GITHUB_SHA}" | cut -c1-7)
+          IMAGE_TAG=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          IMAGE_NAME=${{ env.ECR_REGISTRY }}/${{ matrix.repo }}:$IMAGE_TAG
+          IMAGE_LATEST=${{ env.ECR_REGISTRY }}/${{ matrix.repo }}:latest
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_OUTPUT
+          echo "IMAGE_LATEST=$IMAGE_LATEST" >> $GITHUB_OUTPUT
 
       - name: Build Docker image
         working-directory: ClickAndMunchApp/backend/${{ matrix.service }}
         run: |
           docker build -t ${{ steps.vars.outputs.IMAGE_NAME }} .
 
+      - name: Tag latest
+        run: |
+          docker tag ${{ steps.vars.outputs.IMAGE_NAME }} ${{ steps.vars.outputs.IMAGE_LATEST }}
+
       - name: Push Docker image
         run: |
           docker push ${{ steps.vars.outputs.IMAGE_NAME }}
+          docker push ${{ steps.vars.outputs.IMAGE_LATEST }}
 
       - name: Output image tag
         run: echo "Pushed ${{ steps.vars.outputs.IMAGE_NAME }}"
+
+      - name: Force ECS service rollout
+        if: env.ECS_CLUSTER != ''
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          ECS_CLUSTER: ${{ env.ECS_CLUSTER }}
+          ECS_SERVICE: clickmunch-${{ matrix.ecs_service }}
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --force-new-deployment \
+            --region "$AWS_REGION"
