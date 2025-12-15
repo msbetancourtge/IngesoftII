@@ -44,7 +44,7 @@ jobs:
 
       - name: Render images map
         run: |
-          cat > generated.auto.tfvars <<'EOF'
+          cat > generated.auto.tfvars <<EOF
           images = {
             api_gateway = "${ECR_REGISTRY}/clickandmunchapp/api-gateway:latest"
             auth        = "${ECR_REGISTRY}/clickandmunchapp/auth:latest"
