@@ -14,12 +14,13 @@ jobs:
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
-      TF_VAR_vpc_cidr: ${{ vars.VPC_CIDR }}
       TF_VAR_domain_name: ${{ vars.DOMAIN_NAME }}
       TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
       TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
       TF_VAR_cluster_name: clickmunch
       ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+      VPC_CIDR_INPUT: ${{ vars.VPC_CIDR }}
+      VPC_CIDR_SECRET: ${{ secrets.VPC_CIDR }}
       TF_BACKEND_BUCKET: ${{ secrets.TF_BACKEND_BUCKET }}
       TF_BACKEND_DYNAMODB_TABLE: ${{ secrets.TF_BACKEND_DYNAMODB_TABLE }}
       TF_BACKEND_REGION: ${{ secrets.TF_BACKEND_REGION }}
@@ -29,6 +30,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set VPC CIDR env
+        run: |
+          if [ -n "$VPC_CIDR_INPUT" ]; then
+            echo "TF_VAR_vpc_cidr=$VPC_CIDR_INPUT" >> $GITHUB_ENV
+          elif [ -n "$VPC_CIDR_SECRET" ]; then
+            echo "TF_VAR_vpc_cidr=$VPC_CIDR_SECRET" >> $GITHUB_ENV
+          else
+            echo "VPC_CIDR not set in repo variables or secrets" >&2
+            exit 1
+          fi
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
