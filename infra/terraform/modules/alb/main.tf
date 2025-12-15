@@ -1,7 +1,16 @@
 variable "vpc_id" { type = string }
 variable "public_subnet_ids" { type = list(string) }
 variable "alb_sg_id" { type = string }
-variable "certificate_arn" { type = string }
+variable "enable_https" {
+  type        = bool
+  description = "Enable HTTPS listener and HTTP->HTTPS redirect"
+  default     = false
+}
+variable "certificate_arn" {
+  type        = string
+  description = "ACM certificate ARN (required if enable_https is true)"
+  default     = null
+}
 
 resource "aws_lb" "this" {
   name               = "clickmunch-alb"
@@ -27,6 +36,7 @@ resource "aws_lb_target_group" "gateway" {
 }
 
 resource "aws_lb_listener" "https" {
+  count             = var.enable_https ? 1 : 0
   load_balancer_arn = aws_lb.this.arn
   port              = 443
   protocol          = "HTTPS"
@@ -40,6 +50,7 @@ resource "aws_lb_listener" "https" {
 }
 
 resource "aws_lb_listener" "http" {
+  count             = var.enable_https ? 1 : 0
   load_balancer_arn = aws_lb.this.arn
   port              = 80
   protocol          = "HTTP"
@@ -51,6 +62,18 @@ resource "aws_lb_listener" "http" {
       protocol    = "HTTPS"
       status_code = "HTTP_301"
     }
+  }
+}
+
+resource "aws_lb_listener" "http_only" {
+  count             = var.enable_https ? 0 : 1
+  load_balancer_arn = aws_lb.this.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.gateway.arn
   }
 }
 

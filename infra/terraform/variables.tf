@@ -9,8 +9,9 @@ variable "vpc_cidr" {
 }
 
 variable "domain_name" {
-  description = "Domain name used for ACM certificate"
+  description = "Optional domain name for ACM/ALB HTTPS (leave empty for HTTP-only)"
   type        = string
+  default     = ""
 }
 
 variable "db_username" {
