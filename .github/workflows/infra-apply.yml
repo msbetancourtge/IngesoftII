@@ -43,6 +43,11 @@ jobs:
             exit 1
           fi
 
+      - name: Debug Terraform vars
+        run: |
+          echo "TF_VAR_execution_role_arn is set to: ${TF_VAR_execution_role_arn:-(empty)}"
+          echo "TF_VAR_aws_region: ${TF_VAR_aws_region:-(empty)}"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
